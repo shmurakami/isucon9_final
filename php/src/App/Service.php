@@ -683,7 +683,7 @@ class Service
             return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
         }
 
-        $stmt = $this->dbh->prepare("SELECT * FROM `seat_master2` WHERE `train_class`=? AND `car_number`=?");
+        $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column`");
         $stmt->execute([
             $trainClass,
             $carNumber,

@@ -56,7 +56,8 @@ CREATE TABLE `station_master` (
   `name` varchar(100) NOT NULL UNIQUE,
   `is_stop_express` tinyint(1) NOT NULL,
   `is_stop_semi_express` tinyint(1) NOT NULL,
-  `is_stop_local` tinyint(1) NOT NULL
+  `is_stop_local` tinyint(1) NOT NULL,
+  KEY `search1` (`distance`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `train_master`;

@@ -15,12 +15,12 @@ return function (App $app) {
         return $logger;
     };
 
-//    $container['redis'] = function(ContainerInterface $c) {
-//        $settings = $c->get('settings')['redis'];
-//        $redis = new \Redis();
-//        $redis->pconnect($settings['host']);
-//        return $redis;
-//    };
+    $container['redis'] = function(ContainerInterface $c) {
+        $settings = $c->get('settings')['redis'];
+        $redis = new \Redis();
+        $redis->pconnect($settings['host']);
+        return $redis;
+    };
 
     // database
     $container['dbh'] = function (ContainerInterface $c) {

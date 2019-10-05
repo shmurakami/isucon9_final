@@ -51,7 +51,7 @@ class Service
         $this->logger = $container->get('logger');
         $this->dbh = $container->get('dbh');
         $this->session = $container->get('session');
-//        $this->redis = $container->get('redis');
+        $this->redis = $container->get('redis');
     }
 
 

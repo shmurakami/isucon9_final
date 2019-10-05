@@ -721,19 +721,21 @@ class Service
 //                    return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
 //                }
 
-                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                $stmt->execute([$seatReservation['departure']]);
-                $departureStation = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($departureStation === false) {
-                    return $response->withJson($this->errorResponse("failed to fetch departure"), StatusCode::HTTP_BAD_REQUEST);
-                }
+                $departureStation = $this->getStation($seatReservation['departure']);
+//                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+//                $stmt->execute([$seatReservation['departure']]);
+//                $departureStation = $stmt->fetch(PDO::FETCH_ASSOC);
+//                if ($departureStation === false) {
+//                    return $response->withJson($this->errorResponse("failed to fetch departure"), StatusCode::HTTP_BAD_REQUEST);
+//                }
 
-                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                $stmt->execute([$seatReservation['arrival']]);
-                $arrivalStation = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($departureStation === false) {
-                    return $response->withJson($this->errorResponse("failed to fetch arrivalStation"), StatusCode::HTTP_BAD_REQUEST);
-                }
+                $arrivalStation = $this->getStation($seatReservation['arrival']);
+//                $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+//                $stmt->execute([$seatReservation['arrival']]);
+//                $arrivalStation = $stmt->fetch(PDO::FETCH_ASSOC);
+//                if ($departureStation === false) {
+//                    return $response->withJson($this->errorResponse("failed to fetch arrivalStation"), StatusCode::HTTP_BAD_REQUEST);
+//                }
 
                 if ($train['is_nobori']) {
                     if (($toStation['id'] < $arrivalStation['id']) && $fromStation['id'] <= $arrivalStation['id']) {
@@ -1645,5 +1647,15 @@ class Service
     public function settingsHandler(Request $request, Response $response, array $args)
     {
         return $response->withJson(["payment_api" => Environment::get('PAYMENT_API', 'http://localhost:5000')]);
+    }
+
+    /**
+     * @param string $name
+     * @return array
+     */
+    private function getStation($name)
+    {
+        $key = 'station__' . $name;
+        return json_decode($this->redis->get($key), true);
     }
 }

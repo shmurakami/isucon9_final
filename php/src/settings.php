@@ -11,8 +11,8 @@ return [
         // Monolog settings
         'logger' => [
             'name' => 'isutrain',
-            // 'path' => __DIR__ . '/../logs/app.log',
-            'path' => 'php://stdout',
+             'path' => __DIR__ . '/../logs/app.log',
+//            'path' => 'php://stdout',
             'level' => \Monolog\Logger::DEBUG,
         ],
 

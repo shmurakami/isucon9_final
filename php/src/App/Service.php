@@ -447,9 +447,10 @@ class Service
             if ($isNobori) {
                 $sql .= ' where `distance` <= ' . $fromStation['distance'] . ' order by `distance` desc ';
             } else {
-                $sql .= ' where `distance` >= ' . $fromStation['distance'] . ' order by `distance`';
+                $sql .= ' where `distance` >= ' . $toStation['distance'] . ' order by `distance`';
             }
             $sql .= " ORDER BY `distance`";
+            $this->logger->info($sql);
 
 //            $sql = "SELECT * FROM `station_master` ORDER BY `distance`";
 //            if ($isNobori) {

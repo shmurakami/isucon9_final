@@ -1289,7 +1289,8 @@ class Service
         try {
             $base = '(?, ?, ?, ?)';
             $p = array_fill(0, $rows, $base);
-            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES $p");
+            $pp = implode(',', $p);
+            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES $pp");
             $stmt->execute($payloads);
 
 //            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");

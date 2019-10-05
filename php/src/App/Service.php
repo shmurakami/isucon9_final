@@ -403,16 +403,7 @@ class Service
 
         try {
             $fromStation = $this->getStation($fromName);
-//            $fromStation = $this->redis->get("station__$fromName");
-//            if ($fromStation === false) {
-//                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
-//            }
-
             $toStation = $this->getStation($toName);
-//            $toStation = $this->redis->get("station__$toName");
-//            if ($toStation === false) {
-//                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
-//            }
             $isNobori = false;
             if ($fromStation['distance'] > $toStation['distance']) {
                 $isNobori = true;
@@ -506,7 +497,7 @@ class Service
                     // 列車情報
 
                     // 所要時間
-                    $sql = "SELECT `departure` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?";
+                    $sql = "SELECT `departure`, `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?";
                     $stmt = $this->dbh->prepare($sql);
                     $stmt->execute([
                         $date->format(self::DATE_SQL_FORMAT),
@@ -514,27 +505,15 @@ class Service
                         $train['train_name'],
                         $fromStation['name']
                     ]);
-                    $departure = $stmt->fetch(PDO::FETCH_ASSOC);
-                    if ($departure === false) {
+                    $timetable = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($timetable === false) {
                         $this->logger->error($this->dbh->errorCode(), $this->dbh->errorInfo());
                         return $response->withJson($this->errorResponse(['failed to query']), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
                     }
-                    $departureDate = new \DateTime($date->format('Y-m-d ') . $departure['departure']);
+                    $departureDate = new \DateTime($date->format('Y-m-d ') . $timetable['departure']);
                     if ($date > $departureDate) {
                         // 乗りたい時刻より出発時刻が前なので除外
                         continue;
-                    }
-
-                    $stmt = $this->dbh->prepare("SELECT `arrival` FROM `train_timetable_master` WHERE `date`=? AND `train_class`=? AND `train_name`=? AND `station`=?");
-                    $stmt->execute([
-                        $date->format(self::DATE_SQL_FORMAT),
-                        $train['train_class'],
-                        $train['train_name'],
-                        $toStation['name']
-                    ]);
-                    $arrival = $stmt->fetch(PDO::FETCH_ASSOC);
-                    if ($arrival === false) {
-                        return $response->withJson($this->errorResponse(['failed to query']), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
                     }
 
                     try {
@@ -602,8 +581,8 @@ class Service
                         "last" => $train['last_station'],
                         "departure" => $fromStation['name'],
                         "arrival" => $toStation['name'],
-                        "departure_time"=> $departure['departure'],
-                        "arrival_time" => $arrival['arrival'],
+                        "departure_time"=> $timetable['departure'],
+                        "arrival_time" => $timetable['arrival'],
                         "seat_availability" => $seatAvailability,
                         "seat_fare" => $fareInformation,
                     ];

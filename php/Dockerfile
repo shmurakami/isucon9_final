@@ -1,15 +1,19 @@
 FROM php:7-apache
 
-RUN apt-get update && apt-get install -y git unzip && apt-get clean
-
+RUN apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y git unzip \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_NO_INTERACTION 1
 
 ADD php.ini /usr/local/etc/php/
 
-RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv
-RUN pecl install redis && docker-php-ext-enable redis
+RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv opcache
+RUN pecl install -f -o redis \
+  && docker-php-ext-enable redis \
+  && rm -rf /tmp/pear
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

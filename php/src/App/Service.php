@@ -51,6 +51,21 @@ class Service
 
     private const DATE_SQL_FORMAT = 'Y-m-d';
 
+    private $distanceFare = [
+        0 => 2500,
+        50 => 3000,
+        75 => 3700,
+        100 => 4500,
+        150 => 5200,
+        200 => 6000,
+        300 => 7200,
+        400 => 8300,
+        500 => 12000,
+        1000 => 20000,
+    ];
+
+    private $fareList = [];
+
     // constructor receives container instance
     public function __construct(ContainerInterface $container)
     {
@@ -58,8 +73,9 @@ class Service
         $this->dbh = $container->get('dbh');
         $this->session = $container->get('session');
         $this->redis = $container->get('redis');
-    }
 
+        $this->fareList = json_decode('[[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-01-01 00:00:00","fare_multiplier":15}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":9.375}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":7.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-01-01 00:00:00","fare_multiplier":10}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":6.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-01-01 00:00:00","fare_multiplier":8}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-01-01 00:00:00","fare_multiplier":4}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-01-06 00:00:00","fare_multiplier":3}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":1.875}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":1.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-01-06 00:00:00","fare_multiplier":2}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":1.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-01-06 00:00:00","fare_multiplier":1.6}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-01-06 00:00:00","fare_multiplier":0.8}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-03-13 00:00:00","fare_multiplier":9}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":5.625}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":4.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-03-13 00:00:00","fare_multiplier":6}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":3.75}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":3}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-03-13 00:00:00","fare_multiplier":4.8}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":3}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-03-13 00:00:00","fare_multiplier":2.4}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-04-01 00:00:00","fare_multiplier":3}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":1.875}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":1.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-04-01 00:00:00","fare_multiplier":2}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":1.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-04-01 00:00:00","fare_multiplier":1.6}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-04-01 00:00:00","fare_multiplier":0.8}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-04-24 00:00:00","fare_multiplier":15}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":9.375}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":7.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-04-24 00:00:00","fare_multiplier":10}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":6.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-04-24 00:00:00","fare_multiplier":8}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-04-24 00:00:00","fare_multiplier":4}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-05-11 00:00:00","fare_multiplier":3}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":1.875}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":1.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-05-11 00:00:00","fare_multiplier":2}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":1.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-05-11 00:00:00","fare_multiplier":1.6}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-05-11 00:00:00","fare_multiplier":0.8}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-08-07 00:00:00","fare_multiplier":9}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":5.625}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":4.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-08-07 00:00:00","fare_multiplier":6}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":3.75}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":3}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-08-07 00:00:00","fare_multiplier":4.8}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":3}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-08-07 00:00:00","fare_multiplier":2.4}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-08-24 00:00:00","fare_multiplier":3}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":1.875}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":1.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-08-24 00:00:00","fare_multiplier":2}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":1.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-08-24 00:00:00","fare_multiplier":1.6}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":1}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-08-24 00:00:00","fare_multiplier":0.8}],[{"train_class":"\u6700\u901f","seat_class":"premium","start_date":"2020-12-25 00:00:00","fare_multiplier":15}],[{"train_class":"\u6700\u901f","seat_class":"reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":9.375}],[{"train_class":"\u6700\u901f","seat_class":"non-reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":7.5}],[{"train_class":"\u4e2d\u9593","seat_class":"premium","start_date":"2020-12-25 00:00:00","fare_multiplier":10}],[{"train_class":"\u4e2d\u9593","seat_class":"reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":6.25}],[{"train_class":"\u4e2d\u9593","seat_class":"non-reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"premium","start_date":"2020-12-25 00:00:00","fare_multiplier":8}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":5}],[{"train_class":"\u9045\u3044\u3084\u3064","seat_class":"non-reserved","start_date":"2020-12-25 00:00:00","fare_multiplier":4}]]', true);
+    }
 
     // utils
     private function messageResponse($message)
@@ -185,35 +201,30 @@ class Service
     {
         // 料金計算メモ
         // 距離運賃(円) * 期間倍率(繁忙期なら2倍等) * 車両クラス倍率(急行・各停等) * 座席クラス倍率(プレミアム・指定席・自由席)
-        $sql = "SELECT * FROM `station_master` WHERE id=?";
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->execute([$depStation]);
-        $fromStation = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($fromStation === false) {
-            throw new \PDOException('not found');
-        }
-
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->execute([$destStation]);
-        $toStation = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($toStation === false) {
-            throw new \PDOException('not found');
-        }
+        $fromStation = $this->getStationId($depStation);
+        $toStation = $this->getStationId($destStation);
 
         $distFare = $this->getDistanceFare(abs($toStation['distance'] - $fromStation['distance']));
 
         // 期間・車両・座席クラス倍率
-        $stmt = $this->dbh->prepare("SELECT * FROM `fare_master` WHERE `train_class`=? AND `seat_class`=? ORDER BY `start_date`");
-        $stmt->execute([
-            $trainClass,
-            $seatClass,
-        ]);
-        $fareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if ($fareList === false) {
-            throw new \PDOException('not found');
+//        $stmt = $this->dbh->prepare("SELECT * FROM `fare_master` WHERE `train_class`=? AND `seat_class`=? ORDER BY `start_date`");
+//        $stmt->execute([
+//            $trainClass,
+//            $seatClass,
+//        ]);
+//        $fareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//        if ($fareList === false) {
+//            throw new \PDOException('not found');
+//        }
+
+        $fareList = [];
+        foreach ($this->fareList as $fare) {
+            if ($fare['train_class'] === $trainClass && $fare['seat_class'] === $seatClass) {
+                $fareList[] = $fare;
+            }
         }
 
-        $selectedFare = $fareList[0];
+        $selectedFare = null;
         foreach ($fareList as $fare) {
             $dt = new \DateTime($fare['start_date']);
             if ($dt < $date) {
@@ -225,9 +236,10 @@ class Service
 
     private function getDistanceFare(float $origToDestDistance): int
     {
-        $stmt = $this->dbh->prepare("SELECT `distance`,`fare` FROM `distance_fare_master` ORDER BY `distance`");
-        $stmt->execute([]);
-        $distanceFareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//        $stmt = $this->dbh->prepare("SELECT `distance`,`fare` FROM `distance_fare_master` ORDER BY `distance`");
+//        $stmt->execute([]);
+//        $distanceFareList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $distanceFareList = $this->distanceFare;
 
         $lastDistance = 0.0;
         $lastFare = 0;
@@ -1621,7 +1633,18 @@ class Service
         $sth->execute();
         $data = $sth->fetchAll(PDO::FETCH_ASSOC);
         foreach ($data as $station) {
+            $idKey = 'station__' . $station['id'];
             $key = 'station__' . $station['name'];
+
+            $this->redis->set($idKey, json_encode([
+                'id' => $station['id'],
+                'distance' => $station['distance'],
+                'name' => $station['name'],
+                'is_stop_express' => $station['is_stop_express'],
+                'is_stop_semi_express' => $station['is_stop_semi_express'],
+                'is_stop_local' => $station['is_stop_local'],
+            ]));
+
             $this->redis->set($key, json_encode([
                 'id' => $station['id'],
                 'distance' => $station['distance'],
@@ -1654,6 +1677,19 @@ class Service
         $key = 'station__' . $name;
         $station = json_decode($this->redis->get($key), true);
         $this->stations[$name] = $station;
+        return $station;
+    }
+
+    private $stationByIds = [];
+    private function getStationId($id)
+    {
+        if (isset($this->stationByIds[$id])) {
+            return $this->stationByIds[$id];
+        }
+
+        $key = 'station__' . $id;
+        $station = json_decode($this->redis->get($key), true);
+        $this->stationByIds[$id] = $station;
         return $station;
     }
 }

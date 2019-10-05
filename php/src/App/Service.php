@@ -1649,13 +1649,20 @@ class Service
         return $response->withJson(["payment_api" => Environment::get('PAYMENT_API', 'http://localhost:5000')]);
     }
 
+    private $stations = [];
     /**
      * @param string $name
      * @return array
      */
     private function getStation($name)
     {
+        if (isset($this->stations[$name])) {
+            return $this->stations[$name];
+        }
+
         $key = 'station__' . $name;
-        return json_decode($this->redis->get($key), true);
+        $station = json_decode($this->redis->get($key), true);
+        $this->stations[$name] = $station;
+        return $station;
     }
 }

@@ -404,6 +404,7 @@ class Service
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }
 
+            // TODO 2回投げるの無駄
             $sth = $this->dbh->prepare($sql);
             $sth->execute([$toName]);
             $toStation = $sth->fetch(PDO::FETCH_ASSOC);

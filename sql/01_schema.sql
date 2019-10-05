@@ -68,7 +68,8 @@ CREATE TABLE `train_master` (
   `start_station` varchar(100) NOT NULL,
   `last_station` varchar(100) NOT NULL,
   `is_nobori` tinyint(1) NOT NULL,
-  PRIMARY KEY (`train_name`,`date`)
+  PRIMARY KEY (`train_name`,`date`),
+  KEY `search1` (`date`,`train_class`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `train_timetable_master`;

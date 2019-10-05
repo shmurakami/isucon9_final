@@ -449,7 +449,6 @@ class Service
             } else {
                 $sql .= ' where `distance` >= ' . $toStation['distance'] . ' order by `distance`';
             }
-            $sql .= " ORDER BY `distance`";
             $this->logger->info($sql);
 
 //            $sql = "SELECT * FROM `station_master` ORDER BY `distance`";

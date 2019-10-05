@@ -750,24 +750,26 @@ class Service
         }
 
         // 各号車の情報
-        $simpleCarInformationList = [];
-        $i = 1;
-        while (true) {
-            $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
-            $stmt->execute([
-                $trainClass,
-                $i,
-            ]);
-            $seat = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($seat === false) {
-                break;
-            }
-            $simpleCarInformationList[] = [
-                'car_number' => $i,
-                'seat_class' => $seat['seat_class'],
-            ];
-            $i++;
-        }
+        $simpleCarInformationList  = json_decode('{"express":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"reserved"},{"car_number":"5","seat_class":"reserved"},{"car_number":"6","seat_class":"reserved"},{"car_number":"7","seat_class":"reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"reserved"},{"car_number":"12","seat_class":"reserved"},{"car_number":"13","seat_class":"reserved"},{"car_number":"14","seat_class":"reserved"},{"car_number":"15","seat_class":"reserved"},{"car_number":"16","seat_class":"reserved"}],"semi_express":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"non-reserved"},{"car_number":"5","seat_class":"non-reserved"},{"car_number":"6","seat_class":"reserved"},{"car_number":"7","seat_class":"reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"reserved"},{"car_number":"12","seat_class":"reserved"},{"car_number":"13","seat_class":"reserved"},{"car_number":"14","seat_class":"reserved"},{"car_number":"15","seat_class":"reserved"},{"car_number":"16","seat_class":"reserved"}],"local":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"non-reserved"},{"car_number":"5","seat_class":"non-reserved"},{"car_number":"6","seat_class":"non-reserved"},{"car_number":"7","seat_class":"non-reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"non-reserved"},{"car_number":"12","seat_class":"non-reserved"},{"car_number":"13","seat_class":"non-reserved"},{"car_number":"14","seat_class":"non-reserved"},{"car_number":"15","seat_class":"non-reserved"},{"car_number":"16","seat_class":"reserved"}]}
+', true)[$trainClass];
+//        $simpleCarInformationList = [];
+//        $i = 1;
+//        while (true) {
+//            $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? ORDER BY `seat_row`, `seat_column` LIMIT 1");
+//            $stmt->execute([
+//                $trainClass,
+//                $i,
+//            ]);
+//            $seat = $stmt->fetch(PDO::FETCH_ASSOC);
+//            if ($seat === false) {
+//                break;
+//            }
+//            $simpleCarInformationList[] = [
+//                'car_number' => $i,
+//                'seat_class' => $seat['seat_class'],
+//            ];
+//            $i++;
+//        }
 
         $carInformation = [
             'date' => $date->format('Y/m/d'),

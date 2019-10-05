@@ -402,15 +402,17 @@ class Service
         $child = $request->getParam('child', 0);
 
         try {
-            $fromStation = $this->redis->get("station__$fromName");
-            if ($fromStation === false) {
-                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
-            }
+            $fromStation = $this->getStation($fromName);
+//            $fromStation = $this->redis->get("station__$fromName");
+//            if ($fromStation === false) {
+//                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
+//            }
 
-            $toStation = $this->redis->get("station__$toName");
-            if ($toStation === false) {
-                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
-            }
+            $toStation = $this->getStation($toName);
+//            $toStation = $this->redis->get("station__$toName");
+//            if ($toStation === false) {
+//                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
+//            }
             $isNobori = false;
             if ($fromStation['distance'] > $toStation['distance']) {
                 $isNobori = true;

@@ -1271,39 +1271,15 @@ class Service
 
         //席の予約情報登録
         //reservationsレコード1に対してseat_reservationstが1以上登録される
-        $payloads = [];
         foreach ($payload['seats'] as $v) {
-//            $payloads[] = [
-//                $reservation_id,
-//                $payload['car_number'],
-//                $v['row'],
-//                $v['column']
-//            ];
-            $payloads[] = $reservation_id;
-            $payloads[] = $payload['car_number'];
-            $payloads[] = $v['row'];
-            $payloads[] = $v['column'];
-        }
-        $rows = count($payloads['seats']);
-
-        try {
-            $base = '(?, ?, ?, ?)';
-            $p = array_fill(0, $rows, $base);
-            $pp = implode(',', $p);
-            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES $pp");
-            $stmt->execute($payloads);
-
-//            $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");
-//            $stmt->execute([
-//                $reservation_id,
-//                $payload['car_number'],
-//                $v['row'],
-//                $v['column']
-//            ]);
-        } catch (\PDOException $e) {
-            $this->logger->error($e->getMessage());
-            $this->dbh->rollBack();
-            return $response->withJson($this->errorResponse("座席予約の登録に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+            try {
+                $stmt = $this->dbh->prepare("INSERT INTO `seat_reservations` (`reservation_id`, `car_number`, `seat_row`, `seat_column`) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$reservation_id, $payload['car_number'], $v['row'], $v['column']]);
+            } catch (\PDOException $e) {
+                $this->logger->error($e->getMessage());
+                $this->dbh->rollBack();
+                return $response->withJson($this->errorResponse("座席予約の登録に失敗しました"), StatusCode::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
         $this->dbh->commit();
 

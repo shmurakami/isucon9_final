@@ -443,19 +443,11 @@ class Service
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }
 
-            $sql = "SELECT * FROM `station_master`";
+            $sql = "SELECT * FROM `station_master` ORDER BY `distance`";
             if ($isNobori) {
-                $sql .= ' where `distance` <= ' . $fromStation['distance'] . ' order by `distance` desc ';
-            } else {
-                $sql .= ' where `distance` >= ' . $fromStation['distance'] . ' order by `distance`';
-            }
-            $this->logger->info($sql);
-
-//            $sql = "SELECT * FROM `station_master` ORDER BY `distance`";
-//            if ($isNobori) {
 //                 if nobori reverse the order
-//                $sql = $sql . " DESC";
-//            }
+                $sql = $sql . " DESC";
+            }
 
             if($this->session->exists("stations:$sql")){
                 $stations = $this->session->get("stations:$sql");

@@ -20,7 +20,7 @@ CREATE TABLE `reservations` (
   `user_id` bigint NOT NULL,
   `date` datetime NOT NULL,
   `train_class` varchar(100) NOT NULL,
-  `train_name` varchar(100) NOT NULL,
+  `train_name` int(10) NOT NULL,
   `departure` varchar(100) NOT NULL,
   `arrival` varchar(100) NOT NULL,
   `status` enum('requesting', 'done', 'rejected') NOT NULL,
@@ -64,20 +64,22 @@ CREATE TABLE `train_master` (
   `date` date NOT NULL,
   `departure_at` time NOT NULL,
   `train_class` varchar(100) NOT NULL,
-  `train_name` varchar(100) NOT NULL,
+  `train_name` int(10) NOT NULL,
   `start_station` varchar(100) NOT NULL,
   `last_station` varchar(100) NOT NULL,
-  `is_nobori` tinyint(1) NOT NULL
+  `is_nobori` tinyint(1) NOT NULL,
+  PRIMARY KEY (`train_name`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `train_timetable_master`;
 CREATE TABLE `train_timetable_master` (
   `date` date NOT NULL,
   `train_class` varchar(100) NOT NULL,
-  `train_name` varchar(100) NOT NULL,
+  `train_name` int(10) NOT NULL,
   `station` varchar(100) NOT NULL,
   `departure` time NOT NULL,
-  `arrival` time NOT NULL
+  `arrival` time NOT NULL,
+  KEY `timetable` (`train_name`,`date`,`train_class`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users`;

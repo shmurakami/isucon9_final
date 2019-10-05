@@ -419,14 +419,14 @@ class Service
             $usableTrainClassList = $this->getUsableTrainClassList($fromStation, $toStation);
             $in = str_repeat('?,', count($usableTrainClassList) -1) .  '?';
             if ($trainClass === '') {
-                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=?";
+                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=? order by train_name";
                 $args = array_merge(
                     [$date->format(self::DATE_SQL_FORMAT)],
                     $usableTrainClassList,
                     [$isNobori]
                 );
             } else {
-                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=? AND `train_class`=?";
+                $sql = "SELECT * FROM `train_master` WHERE `date`=? AND `train_class` IN (${in}) AND `is_nobori`=? AND `train_class`=? order by train_name";
                 $args = array_merge(
                     [$date->format(self::DATE_SQL_FORMAT)],
                     $usableTrainClassList,
@@ -457,11 +457,6 @@ class Service
 
             $this->logger->info("From:", [$fromStation]);
             $this->logger->info("To:", [$toStation]);
-            if ($isNobori) {
-                $this->logger->info("nobori");
-            } else {
-                $this->logger->info("kudari");
-            }
 
             $trainSearchResponseList = [];
 

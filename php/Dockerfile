@@ -8,7 +8,7 @@ ENV COMPOSER_NO_INTERACTION 1
 
 ADD php.ini /usr/local/etc/php/
 
-RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv
+RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv phpredis
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -447,12 +447,13 @@ class Service
                 $sql = $sql . " DESC";
             }
 
-            $stmt = $this->dbh->prepare($sql);
-            $stmt->execute([]);
-            $stations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if ($stations === false) {
-                return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
+            if($this->session->exists("stations:$sql")){
+                $stations = $this->session->get("stations:$sql");
+            }else{
+                $stmt = $this->dbh->prepare($sql);
+                $stmt->execute([]);
+                $stations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $this->session->set("stations:$sql",$stations);
             }
 
             $this->logger->info("From:", [$fromStation]);

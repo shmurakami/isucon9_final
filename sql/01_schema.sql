@@ -28,7 +28,8 @@ CREATE TABLE `reservations` (
   `adult` int NOT NULL,
   `child` int NOT NULL,
   `amount` bigint NOT NULL,
-  KEY `user_id` (`user_id`)
+  KEY `user_id` (`user_id`),
+  KEY `seats` (`date`, `train_class`, `train_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `seat_master`;
@@ -38,7 +39,8 @@ CREATE TABLE `seat_master` (
   `seat_column` enum('A', 'B', 'C', 'D', 'E') NOT NULL,
   `seat_row` int(11) NOT NULL,
   `seat_class` enum('premium', 'reserved', 'non-reserved') NOT NULL,
-  `is_smoking_seat` tinyint(1) NOT NULL
+  `is_smoking_seat` tinyint(1) NOT NULL,
+  KEY `seats` (`train_class`, `car_number`, `seat_row`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `seat_reservations`;
@@ -70,7 +72,7 @@ CREATE TABLE `train_master` (
   `last_station` varchar(100) NOT NULL,
   `is_nobori` tinyint(1) NOT NULL,
   PRIMARY KEY (`train_name`,`date`),
-  KEY `search1` (`date`,`train_class`)
+  KEY `search1` (`date`,`train_class`, `train_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `train_timetable_master`;

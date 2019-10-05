@@ -693,7 +693,7 @@ class Service
                 'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
-            $stmt = $this->dbh->prepare("SELECT `s`.* FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
+            $stmt = $this->dbh->prepare("SELECT `s`.*, `r`.`departure`, `r`.`arrival` FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
             $stmt->execute([
                 $date->format(self::DATE_SQL_FORMAT),
                 $seat['train_class'],
@@ -707,22 +707,22 @@ class Service
                 return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
             }
             foreach ($seatReservationList as $seatReservation) {
-                $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
-                $stmt->execute([$seatReservation['reservation_id']]);
-                $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
-                if ($reservation === false) {
-                    return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
-                }
+//                $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id`=?");
+//                $stmt->execute([$seatReservation['reservation_id']]);
+//                $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+//                if ($reservation === false) {
+//                    return $response->withJson($this->errorResponse("failed to fetch seat_reservations"), StatusCode::HTTP_BAD_REQUEST);
+//                }
 
                 $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                $stmt->execute([$reservation['departure']]);
+                $stmt->execute([$seatReservation['departure']]);
                 $departureStation = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($departureStation === false) {
                     return $response->withJson($this->errorResponse("failed to fetch departure"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
                 $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                $stmt->execute([$reservation['arrival']]);
+                $stmt->execute([$seatReservation['arrival']]);
                 $arrivalStation = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($departureStation === false) {
                     return $response->withJson($this->errorResponse("failed to fetch arrivalStation"), StatusCode::HTTP_BAD_REQUEST);

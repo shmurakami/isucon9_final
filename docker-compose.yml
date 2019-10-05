@@ -2,17 +2,17 @@ version: '3'
 
 services:
 
-  nginx:
-    image: nginx:1.17
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./frontend/dist:/opt/isucon/public
-    ports:
-      - "8080:80"
-      - "5000:5000"
-    links:
-      - "webapp"
-      - "payment"
+#  nginx:
+#    image: nginx:1.17
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#      - ./frontend/dist:/opt/isucon/public
+#    ports:
+#      - "8080:80"
+#      - "5000:5000"
+#    links:
+#      - "webapp"
+#      - "payment"
 
   mysql:
     image: mysql:8
@@ -29,39 +29,39 @@ services:
     ports:
       - "13306:3306"
 
-  payment:
-    image: golang:1.12
-    volumes:
-      - ../blackbox/payment:/go/src/payment
-    environment:
-      - "GO111MODULE=on"
-    command:
-      - go
-      - run
-      - main.go
-    working_dir: /go/src/payment
-    env_file:
-      - ".env"
+#  payment:
+#    image: golang:1.12
+#    volumes:
+#      - ../blackbox/payment:/go/src/payment
+#    environment:
+#      - "GO111MODULE=on"
+#    command:
+#      - go
+#      - run
+#      - main.go
+#    working_dir: /go/src/payment
+#    env_file:
+#      - ".env"
 
-  # development only
-  #  phpmyadmin:
-  #    image: phpmyadmin/phpmyadmin
-  #    environment:
-  #      - PMA_ARBITRARY=1
-  #      - PMA_HOST=mysql
-  #      - PMA_USER=root
-  #      - PMA_PASSWORD=password
-  #    links:
-  #      - mysql
-  #    ports:
-  #       - 8082:80
-  #    volumes:
-  #       - /sessions
-  #
-  redis:
-    image: redis:5.0.6
-    ports:
-      - 6379:6379
+#  # development only
+#    phpmyadmin:
+#      image: phpmyadmin/phpmyadmin
+#      environment:
+#        - PMA_ARBITRARY=1
+#        - PMA_HOST=mysql
+#        - PMA_USER=root
+#        - PMA_PASSWORD=password
+#      links:
+#        - mysql
+#      ports:
+#         - 8082:80
+#      volumes:
+#         - /sessions
+
+#  redis:
+#    image: redis:5.0.6
+#    ports:
+#      - 6379:6379
 
 volumes:
   mysql:

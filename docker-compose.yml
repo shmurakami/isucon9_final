@@ -44,20 +44,20 @@ services:
       - ".env"
 
   # development only
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=mysql
-      - PMA_USER=root
-      - PMA_PASSWORD=password
-    links:
-      - mysql
-    ports:
-       - 8082:80
-    volumes:
-       - /sessions
-
+  #  phpmyadmin:
+  #    image: phpmyadmin/phpmyadmin
+  #    environment:
+  #      - PMA_ARBITRARY=1
+  #      - PMA_HOST=mysql
+  #      - PMA_USER=root
+  #      - PMA_PASSWORD=password
+  #    links:
+  #      - mysql
+  #    ports:
+  #       - 8082:80
+  #    volumes:
+  #       - /sessions
+  #
   redis:
     image: redis:5.0.6
     ports:

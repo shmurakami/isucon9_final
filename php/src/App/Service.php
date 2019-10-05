@@ -594,7 +594,7 @@ class Service
 
                     $trainSearchResponseList[] = [
                         "train_class" => $train['train_class'],
-                        "train_name" => (string)$train['train_name'],
+                        "train_name" => $train['train_name'],
                         "start" => $train['start_station'],
                         "last" => $train['last_station'],
                         "departure" => $fromStation['name'],
@@ -772,7 +772,7 @@ class Service
         $carInformation = [
             'date' => $date->format('Y/m/d'),
             'train_class' => $trainClass,
-            'train_name' => (string)$trainName,
+            'train_name' => $trainName,
             'car_number' => (int) $carNumber,
             'seats' => $seatInformationList,
             'cars' => $simpleCarInformationList,

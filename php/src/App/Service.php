@@ -52,16 +52,16 @@ class Service
     private const DATE_SQL_FORMAT = 'Y-m-d';
 
     private $distanceFare = [
-        0 => 2500,
-        50 => 3000,
-        75 => 3700,
-        100 => 4500,
-        150 => 5200,
-        200 => 6000,
-        300 => 7200,
-        400 => 8300,
-        500 => 12000,
-        1000 => 20000,
+        ['distance' => 0,  'fare' =>  2500,],
+        ['distance' => 50, 'fare' =>  3000,],
+        ['distance' => 75, 'fare' =>  3700,],
+        ['distance' => 100 ,'fare' => 4500,],
+        ['distance' => 150 ,'fare' => 5200,],
+        ['distance' => 200 ,'fare' => 6000,],
+        ['distance' => 300 ,'fare' => 7200,],
+        ['distance' => 400 ,'fare' => 8300,],
+        ['distance' => 500 ,'fare' => 12000,],
+        ['distance' => 1000,'fare' => 20000,],
     ];
 
     private $fareList = [];

@@ -84,7 +84,7 @@ CREATE TABLE `train_timetable_master` (
   `station` varchar(100) NOT NULL,
   `departure` time NOT NULL,
   `arrival` time NOT NULL,
-  KEY `timetable` (`train_name`,`date`,`train_class`)
+  KEY `timetable` (`date`,`train_class`,`train_name`,`station`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `users`;

@@ -8,7 +8,8 @@ ENV COMPOSER_NO_INTERACTION 1
 
 ADD php.ini /usr/local/etc/php/
 
-RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv redis
+RUN docker-php-ext-install pdo_mysql mysqli mbstring iconv
+RUN pecl install redis && docker-php-ext-enable redis
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

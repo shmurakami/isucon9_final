@@ -143,26 +143,18 @@ class Service
     private function getAvailableSeats(array $train, array $fromStation, array $toStation, string $seatClass, bool $isSmokingSeat): array
     {
         // 全ての座席を取得する
-        $data = json_decode($this->redis->get('seat_master'), true);
-        $seatList = [];
-        foreach ($data as $row) {
-            if ($row['train_class'] === $train['train_class'] && $row['seat_class'] === $seatClass && $row['is_smoking_seat'] == $isSmokingSeat) {
-                $seatList[] = $row;
-            }
+        $stmt = $this->dbh->prepare("SELECT * FROM seat_master WHERE train_class=? AND seat_class=? AND is_smoking_seat=?;");
+        $stmt->execute([
+            $train['train_class'],
+            $seatClass,
+            $isSmokingSeat,
+        ]);
+        $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($seatList === false) {
+            throw new \PDOException("not found");
         }
-//        $stmt = $this->dbh->prepare("SELECT * FROM seat_master WHERE train_class=? AND seat_class=? AND is_smoking_seat=?;");
-//        $stmt->execute([
-//            $train['train_class'],
-//            $seatClass,
-//            $isSmokingSeat,
-//        ]);
-//        $seatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-//        if ($seatList === false) {
-//            throw new \PDOException("not found");
-//        }
         $availableSeatMap = [];
         foreach ($seatList as $k => $seat) {
-            $this->logger->info(json_encode($seat));
             $key = sprintf("%d_%d_%s", $seat['car_number'], $seat['seat_row'], $seat['seat_column']);
             $availableSeatMap[$key] = $seat;
         }
@@ -1662,11 +1654,6 @@ class Service
                 'is_stop_local' => $station['is_stop_local'],
             ]));
         }
-
-        $stmt = $this->dbh->prepare("SELECT * FROM seat_master");
-        $stmt->execute();
-        $data = $sth->fetchAll(PDO::FETCH_ASSOC);
-        $this->redis->set('seat_master', json_encode($data));
 
         return $response->withJson(["language" => "php", "available_days" => self::AVAILABLE_DAYS]);
     }

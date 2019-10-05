@@ -43,6 +43,12 @@ class Service
         'local' => '遅いやつ',
         ];
 
+    private const TRAIN_CLASS= [
+        '最速' => 'express',
+        '中間' => 'semi_express',
+        '遅いやつ' => 'local',
+    ];
+
     private const DATE_SQL_FORMAT = 'Y-m-d';
 
     // constructor receives container instance
@@ -752,7 +758,7 @@ class Service
 
         // 各号車の情報
         $simpleCarInformationList  = json_decode('{"express":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"reserved"},{"car_number":"5","seat_class":"reserved"},{"car_number":"6","seat_class":"reserved"},{"car_number":"7","seat_class":"reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"reserved"},{"car_number":"12","seat_class":"reserved"},{"car_number":"13","seat_class":"reserved"},{"car_number":"14","seat_class":"reserved"},{"car_number":"15","seat_class":"reserved"},{"car_number":"16","seat_class":"reserved"}],"semi_express":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"non-reserved"},{"car_number":"5","seat_class":"non-reserved"},{"car_number":"6","seat_class":"reserved"},{"car_number":"7","seat_class":"reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"reserved"},{"car_number":"12","seat_class":"reserved"},{"car_number":"13","seat_class":"reserved"},{"car_number":"14","seat_class":"reserved"},{"car_number":"15","seat_class":"reserved"},{"car_number":"16","seat_class":"reserved"}],"local":[{"car_number":"1","seat_class":"non-reserved"},{"car_number":"2","seat_class":"non-reserved"},{"car_number":"3","seat_class":"non-reserved"},{"car_number":"4","seat_class":"non-reserved"},{"car_number":"5","seat_class":"non-reserved"},{"car_number":"6","seat_class":"non-reserved"},{"car_number":"7","seat_class":"non-reserved"},{"car_number":"8","seat_class":"premium"},{"car_number":"9","seat_class":"premium"},{"car_number":"10","seat_class":"premium"},{"car_number":"11","seat_class":"non-reserved"},{"car_number":"12","seat_class":"non-reserved"},{"car_number":"13","seat_class":"non-reserved"},{"car_number":"14","seat_class":"non-reserved"},{"car_number":"15","seat_class":"non-reserved"},{"car_number":"16","seat_class":"reserved"}]}
-', true)[$trainClass];
+', true)[self::TRAIN_CLASS[$trainClass]];
 //        $simpleCarInformationList = [];
 //        $i = 1;
 //        while (true) {

@@ -94,3 +94,19 @@ CREATE TABLE `users` (
   `salt` varbinary(1024) NOT NULL,
   `super_secure_password` varbinary(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+create unique index train_timetable_master_uniqu
+	on train_timetable_master (date, train_class, train_name, station);
+
+create index seat_master3
+	on isutrain.seat_master (seat_row, seat_column, train_class, car_number, seat_class, is_smoking_seat);
+
+create index seat_master4
+	on isutrain.seat_master (train_class, car_number, seat_column, seat_row, seat_class);
+
+create index seat_master_train_class_car_number_seat_class_index
+	on isutrain.seat_master (train_class, car_number, seat_class);
+
+create index seat_reservations_car_number_reservation_id_index
+	on isutrain.seat_reservations (car_number, seat_row, seat_column);

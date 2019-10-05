@@ -696,7 +696,7 @@ class Service
                 'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                 'is_occupied' => false,
             ];
-            $stmt = $this->dbh->prepare("SELECT `s`.*, `r`.`departure`, `r`.`arrival` FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `car_number`=? AND `seat_row`=? AND `seat_column`=?");
+            $stmt = $this->dbh->prepare("SELECT `s`.*, `r`.`departure`, `r`.`arrival` FROM `seat_reservations` s, `reservations` r WHERE `r`.`date`=? AND `r`.`train_class`=? AND `r`.`train_name`=? AND `r`.`reservation_id`=`s`.`reservation_id`");
             $stmt->execute([
                 $date->format(self::DATE_SQL_FORMAT),
                 $seat['train_class'],

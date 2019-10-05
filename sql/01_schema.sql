@@ -27,7 +27,8 @@ CREATE TABLE `reservations` (
   `payment_id` varchar(100) NOT NULL,
   `adult` int NOT NULL,
   `child` int NOT NULL,
-  `amount` bigint NOT NULL
+  `amount` bigint NOT NULL,
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `seat_master`;

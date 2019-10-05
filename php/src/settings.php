@@ -27,5 +27,9 @@ return [
         'app' => [
             'base_dir' => __DIR__ . '/../',
         ],
+
+        'redis' => [
+            'host' => Environment::get('REDIS_HOST', '127.0.0.1'),
+        ],
     ],
 ];

@@ -30,6 +30,10 @@ class Service
      * @var \SlimSession\Helper
      */
     private $session;
+    /**
+     * @var \Redis
+     */
+    private $redis;
 
     private const AVAILABLE_DAYS = 10;
 
@@ -47,6 +51,7 @@ class Service
         $this->logger = $container->get('logger');
         $this->dbh = $container->get('dbh');
         $this->session = $container->get('session');
+        $this->redis = $container->get('redis');
     }
 
 

@@ -946,9 +946,10 @@ class Service
                     return $response->withJson($this->errorResponse("invalid train_class"), StatusCode::HTTP_BAD_REQUEST);
                 }
 
+                $seatRequestCount = $payload['adult'] + $payload['child'];
                 for ($carnum = 1; $carnum <= 16; $carnum++) {
                     // 指定した車両内の座席のうち座席クラス等の条件に一致するもののみ抽出
-                    $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=? ORDER BY `seat_row`, `seat_column`");
+                    $stmt = $this->dbh->prepare("SELECT * FROM `seat_master` WHERE `train_class`=? AND `car_number`=? AND `seat_class`=? AND `is_smoking_seat`=?");
                     $stmt->execute([
                         $payload['train_class'],
                         $carnum,
@@ -965,6 +966,10 @@ class Service
                         // 条件を満たす座席がない車両だったので次へ
                         continue;
                     }
+                    // 席が足りない
+                    if (count($seatList) < $seatRequestCount) {
+                        continue;
+                    }
 
                     foreach ($seatList as $seat) {
                         $s = [
@@ -974,7 +979,7 @@ class Service
                             'is_smoking_seat' => (bool) $seat['is_smoking_seat'],
                             'is_occupied' => false,
                         ];
-                        $stmt = $this->dbh->prepare("SELECT s.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND `car_number` =? AND `seat_row` =? AND `seat_column` =? FOR UPDATE");
+                        $stmt = $this->dbh->prepare("SELECT s.*, r.* FROM `seat_reservations` s, `reservations` r WHERE r.`date` =? AND r.`train_class` =? AND r.`train_name` =? AND r.reservation_id=s.reservation_id FOR UPDATE");
                         $stmt->execute([
                             $date->format(self::DATE_SQL_FORMAT),
                             $seat['train_class'],
@@ -989,29 +994,34 @@ class Service
                             return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
                         }
                         foreach ($seatReservationList as $seatReservation) {
-                            $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id` =? FOR UPDATE");
-                            $stmt->execute([
-                                $seatReservation['reservation_id']
-                            ]);
-                            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
-                            if ($reservation === false) {
-                                $this->dbh->rollBack();
-                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
-                            }
+//                            $stmt = $this->dbh->prepare("SELECT * FROM `reservations` WHERE `reservation_id` =? FOR UPDATE");
+//                            $stmt->execute([
+//                                $seatReservation['reservation_id']
+//                            ]);
+//                            $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
+//                            if ($reservation === false) {
+//                                $this->dbh->rollBack();
+//                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+//                            }
+                            $this->logger->info('sheet');
+                            $this->logger->info($seatReservation);
+                            $reservation = $seatReservation['r'];
 
-                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                            $departureStation = $stmt->execute([$reservation['departure']]);
-                            if ($departureStation === false) {
-                                $this->dbh->rollBack();
-                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
-                            }
+                            $departureStation = $this->getStation($reservation['departure']);
+//                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+//                            $departureStation = $stmt->execute([$reservation['departure']]);
+//                            if ($departureStation === false) {
+//                                $this->dbh->rollBack();
+//                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+//                            }
 
-                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
-                            $arrivalStation = $stmt->execute([$reservation['arrival']]);
-                            if ($arrivalStation === false) {
-                                $this->dbh->rollBack();
-                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
-                            }
+                            $arrivalStation = $this->getStation($reservation['arrival']);
+//                            $stmt = $this->dbh->prepare("SELECT * FROM `station_master` WHERE `name`=?");
+//                            $arrivalStation = $stmt->execute([$reservation['arrival']]);
+//                            if ($arrivalStation === false) {
+//                                $this->dbh->rollBack();
+//                                return $response->withJson($this->errorResponse($this->dbh->errorInfo()), StatusCode::HTTP_BAD_REQUEST);
+//                            }
 
                             if ($train['is_nobori']) {
                                 if (($toStation['id'] < $arrivalStation['id']) && $fromStation['id'] <= $arrivalStation['id']) {

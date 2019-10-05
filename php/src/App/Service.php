@@ -1622,6 +1622,23 @@ class Service
         $this->dbh->exec("TRUNCATE reservations");
         $this->dbh->exec("TRUNCATE users");
 
+        // station_masterをキャッシュ
+        // station__東京 みたいなキーで保存する
+        $sth = $this->dbh->prepare('SELECT * FROM `station_master`');
+        $sth->execute();
+        $data = $sth->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($data as $station) {
+            $key = 'station__' . $station['name'];
+            $this->redis->set($key, json_encode([
+                'id' => $station['id'],
+                'distance' => $station['distance'],
+                'name' => $station['name'],
+                'is_stop_express' => $station['is_stop_express'],
+                'is_stop_semi_express' => $station['is_stop_semi_express'],
+                'is_stop_local' => $station['is_stop_local'],
+            ]));
+        }
+
         return $response->withJson(["language" => "php", "available_days" => self::AVAILABLE_DAYS]);
     }
 

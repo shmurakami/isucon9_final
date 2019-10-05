@@ -35,7 +35,7 @@ class Service
      */
     private $redis;
 
-    private const AVAILABLE_DAYS = 100;
+    private const AVAILABLE_DAYS = 70;
 
     private const TRAIN_CLASS_MAP = [
         'express' => '最速',

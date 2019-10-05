@@ -402,18 +402,12 @@ class Service
         $child = $request->getParam('child', 0);
 
         try {
-            $sql = "SELECT * FROM `station_master` WHERE `name`=?";
-            $sth = $this->dbh->prepare($sql);
-            $sth->execute([$fromName]);
-            $fromStation = $sth->fetch(PDO::FETCH_ASSOC);
+            $fromStation = $this->redis->get("station__$fromName");
             if ($fromStation === false) {
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }
 
-            // TODO 2回投げるの無駄
-            $sth = $this->dbh->prepare($sql);
-            $sth->execute([$toName]);
-            $toStation = $sth->fetch(PDO::FETCH_ASSOC);
+            $toStation = $this->redis->get("station__$toName");
             if ($toStation === false) {
                 return $response->withJson($this->errorResponse(['not found']), StatusCode::HTTP_BAD_REQUEST);
             }

@@ -48,7 +48,8 @@ CREATE TABLE `seat_reservations` (
   `reservation_id` bigint NOT NULL,
   `car_number` int unsigned NOT NULL,
   `seat_row` int unsigned NOT NULL,
-  `seat_column` varchar(100) NOT NULL
+  `seat_column` varchar(100) NOT NULL,
+   KEY `reserv` (`reservation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `station_master`;
